@@ -1,0 +1,156 @@
+body {
+  margin-left: 20px;
+  padding: 0;
+  height: 100%;
+  color: #fff;
+  overflow: hidden;
+}
+html {
+  width: 100%;
+  height: 100%;
+}
+.outer-wrapper {
+  width: 100%;
+  height: 100%;
+}
+.left-wrapper {
+  padding-top: 20px;
+  box-shadow: border-box;
+  float: left;
+  height: 100%;
+  width: 25%;
+  margin-right: 20px;
+}
+.middle-wrapper {
+  padding-top: 40px;
+  box-shadow: border-box;
+  float: left;
+  height: 100%;
+  width: 38%;
+  margin-right: 20px;
+}
+.right-wrapper {
+  padding-top: 40px;
+  box-shadow: border-box;
+  float: left;
+  height: 100%;
+  width: 34%;
+}
+.wrapper-item {
+  width: 100%;
+  height: 50%;
+  /* margin-bottom: 40px; */
+  background-image: url(./../img/智慧台区展示/框11-8.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.wrapper-item:last-child {
+  margin-bottom: 0;
+}
+.wrapper-item-content {
+  height: 80%;
+  width: 100%;
+}
+
+/*label start*/
+.item-title {
+  padding-left: 30px;
+  padding-top: 25px;
+  height: 50px;
+}
+.icon-img {
+  margin-right: 5px;
+}
+.icon-img img {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  top: 4px;
+}
+.icon-text {
+  font-size: 20px;
+}
+/*label end*/
+
+/*first charts start*/
+.left-item-one {
+  text-align: center;
+  padding-top: 10%;
+  width: 25%;
+  float: left;
+}
+.left-item-one-img {
+  width: 100%;
+}
+.left-item-one-img img {
+  width: 80px;
+  height: 80px;
+}
+.left-item-one-title {
+  font-size: 17px;
+  padding-top: 10px;
+}
+.left-item-one-num {
+  font-weight: bold;
+  font-size: 20px;
+  color: rgb(246, 213, 74);
+  padding-top: 20px;
+}
+/*first charts end*/
+
+/*second charts start*/
+.left-item-two {
+  width: 25%;
+  height: 100%;
+  float: left;
+}
+/*second charts end*/
+
+/*three charts start*/
+.left-item-three {
+  width: 50%;
+  height: 100%;
+  float: left;
+}
+.right-padding-60 {
+  box-sizing: border-box;
+  padding-right: 60px;
+}
+/*three charts end*/
+
+/*middle charts start*/
+.middle-item {
+  width: 100%;
+  height: 100%;
+  background-image: url(./../img/智慧台区展示/背景2.jpg);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: relative;
+}
+.map-charts {
+  width: 100%;
+  height: 100%;
+  /*transform: rotateX(45deg);*/
+}
+.middle-item-button {
+  position: absolute;
+  z-index: 999;
+  right: 80px;
+  top: 40px;
+  height: 100px;
+  width: 300px;
+  background-image: url(./../img/智慧台区展示/台区框-8.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  text-align: center;
+}
+.middle-item-button > img {
+  width: 85px;
+  height: 85px;
+  vertical-align: top;
+}
+.middle-item-button > span {
+  font-size: 32px;
+  line-height: 100px;
+}
+/*middle charts end*/
