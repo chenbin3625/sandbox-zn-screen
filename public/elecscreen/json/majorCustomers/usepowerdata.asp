@@ -1,0 +1,17 @@
+{
+	power:{
+		title:"",
+		value:220,
+		max:380
+	},
+	load:{
+		title:"",
+		value:32,
+		max:60
+	},
+	rate:{
+		title:"",
+		value:70,
+		max:100
+	}
+}

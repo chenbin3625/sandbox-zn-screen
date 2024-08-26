@@ -1,0 +1,455 @@
+body {
+  margin-left: 20px;
+  padding: 0;
+  height: 1620px;
+  color: #fff;
+  overflow: hidden;
+}
+.outer-wrapper {
+  width: 100%;
+  height: 100%;
+}
+.left1-wrapper {
+  float: left;
+  height: 100%;
+  width: 25%;
+  margin-right: 5px;
+}
+.left2-wrapper {
+  float: left;
+  height: 100%;
+  width: 15%;
+  margin-right: 10px;
+}
+.middle-wrapper {
+  float: left;
+  height: 100%;
+  width: 58%;
+  margin-right: 5px;
+}
+.right-wrapper {
+  float: left;
+  height: 100%;
+  width: 25%;
+}
+
+.item-one {
+  margin-top: 20px;
+  width: 100%;
+  height: 25%;
+  background-image: url(./../img/风电项目展示/风电图框11.png);
+  background-size: 100% 100%;
+}
+.item-two {
+  margin-top: 20px;
+  width: 100%;
+  height: 21%;
+  background-image: url(./../img/风电项目展示/风电图框22.png);
+  background-size: 100% 100%;
+}
+.left2-item {
+  margin-top: 20px;
+  width: 100%;
+  background-image: url(./../img/风电项目展示/风电图框3.png);
+  background-size: 100% 100%;
+  height: 47%;
+}
+.item-title {
+  padding-left: 30px;
+  padding-top: 25px;
+  height: 50px;
+}
+.icon-img {
+  margin-right: 20px;
+}
+.icon-img img {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  top: 4px;
+}
+.icon-text {
+  font-size: 20px;
+}
+
+/*first charts start*/
+.left-item-one {
+  height: 96px;
+  margin-top: 5px;
+  margin-left: 20px;
+}
+.left-item-one-title {
+  height: 54px;
+}
+.left-item-one-title-img {
+  float: left;
+  margin-right: 10px;
+}
+.left-item-one-title-img img {
+  position: relative;
+  top: 3px;
+  width: 35px;
+}
+.left-item-one-title-text {
+  float: left;
+}
+.left-item-one-title-text-danwei {
+  font-weight: bold;
+  padding-top: 5px;
+}
+.left-item-one-charts-wrapper {
+  margin-top: 10px;
+  padding-right: 40px;
+  box-sizing: border-box;
+}
+.left-item-one-charts {
+  width: 83%;
+  height: 15px;
+  /*background: red;*/
+}
+/*first charts end*/
+
+/*second charts start*/
+.left-item-two-wrapper {
+  padding-left: 60px;
+  margin-top: 20px;
+  box-sizing: border-box;
+  position: absolute;
+  width: 24%;
+}
+.left-item-two {
+  width: 33%;
+  float: left;
+}
+.left-item-two-img {
+  margin-bottom: 20px;
+}
+.left-item-two-img img {
+  width: 65px;
+  height: 65px;
+}
+.left-item-two-text {
+  position: relative;
+  left: -30px;
+  text-align: center;
+}
+.left-item-two-text-num {
+  font-size: 30px;
+  font-weight: bold;
+}
+.num1 {
+  color: rgb(6, 200, 252);
+}
+.num2 {
+  color: #fee100;
+}
+.num3 {
+  color: rgb(82, 255, 226);
+}
+.left-item-two-text-danwei {
+  padding-top: 10px;
+  /* font-size: 28px; */
+  /*color: rgb(128,143,167);*/
+}
+.left-item-two-text-title {
+  font-size: 20px;
+  padding-top: 20px;
+}
+/*second charts end*/
+
+/*three charts start*/
+.left-item-three {
+  /*padding-top: 80px;*/
+  padding-left: 38px;
+  padding-right: 38px;
+  padding-bottom: 26px;
+  height: 405px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.left-item-three-charts {
+  width: 100%;
+  height: 100%;
+}
+/*three charts end*/
+
+/*four charts start*/
+.left2-item-title {
+  padding-top: 20px;
+  padding-left: 20px;
+}
+.left2-item-title img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  position: relative;
+  top: 10px;
+}
+.left2-item-title span {
+  font-size: 20px;
+  font-weight: bold;
+}
+.left2-item-top-wrapper {
+  margin-left: 20px;
+  /* margin-bottom: 90px; */
+  margin-: 30px;
+}
+.left2-item-top-icon {
+  margin-top: 15px;
+  height: 50px;
+  /* padding-left: -0px; */
+}
+.left2-item-top-icon-img {
+  float: left;
+  height: 40px;
+  width: 40px;
+  margin-right: 10px;
+  padding-top: 5px;
+}
+.left2-item-top-icon-img img {
+  width: 100%;
+  height: 100%;
+}
+.left2-item-top-icon-text {
+  float: left;
+  /* font-size: 32px; */
+  position: relative;
+  top: px;
+}
+.left2-item-top-icon-text .div {
+  display: block;
+}
+.left2-item-top-icon-text .div:last-child {
+  padding-top: 5px;
+}
+.left2-item-bottom-weraper {
+  width: 100%;
+}
+.left2-item-bottom {
+  background: url(./../img/风电项目展示/分割线-8.png);
+  background-repeat: no-repeat;
+  background-size: 100%;
+  padding-top: 20px;
+  padding-left: 20px;
+  box-sizing: border-box;
+  height: 160px;
+}
+.left2-item-bottom .green {
+  color: #24edb8;
+}
+.left2-item-bottom .blue {
+  color: #01aae5;
+}
+.left2-item-bottom .origin {
+  color: #ff902c;
+}
+.left2-item-bottom-title {
+  /* font-size: 48px; */
+}
+.left2-item-bottom-title span {
+  /* font-size: 38px; */
+}
+.left2-item-bottom-num {
+  width: 100%;
+  height: 30%;
+  padding-top: 20px;
+  /* padding-bottom: 60px; */
+  text-align: center;
+}
+.left2-item-bottom-num span {
+  font-size: 60px;
+  position: relative;
+}
+.left2-item-bottom-num span:nth-child(2) {
+  left: -21px;
+  top: 2px;
+}
+.left2-item-bottom-num span:nth-child(3) {
+  left: -40px;
+}
+.left2-item-bottom-num span:nth-child(4) {
+  left: -68px;
+  top: px;
+}
+.left2-item-bottom-num span:nth-child(5) {
+  left: -92px;
+}
+.left2-item-bottom-num span:nth-child(6) {
+  left: -215px;
+}
+.left2-item-bottom-num span:nth-child(7) {
+  left: -258px;
+}
+.left2-item-bottom-num span:nth-child(8) {
+  left: -301px;
+}
+.left2-item-bottom-num span:nth-child(9) {
+  left: -344px;
+}
+.point {
+  top: 30px;
+}
+/*four charts end*/
+
+/*five charts start*/
+.middle-item-wrapper {
+  height: 100%;
+  width: 100%;
+  padding-top: 20px;
+  box-sizing: border-box;
+}
+.middle-item {
+  height: 47.5%;
+  width: 100%;
+  background: url(./../img/光伏项目/地图背景.jpg);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: relative;
+}
+.middle-item-title {
+  position: absolute;
+  height: 140px;
+  line-height: 140px;
+  width: 40%;
+  margin-left: 30%;
+  background: url(./../img/光伏项目/项目分部.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.middle-item-title-name {
+  text-align: center;
+  font-size: 30px;
+  height: 100%;
+  overflow: hidden;
+}
+.middle-item-content {
+  width: 90%;
+  height: 90%;
+  padding-top: 140px;
+  box-sizing: border-box;
+  padding-left: 140px;
+}
+.middle-item-content-charts {
+  width: 100%;
+  height: 100%;
+}
+/*five charts end*/
+.right-item-one-wrapper {
+  float: left;
+  width: 50%;
+  height: 400px;
+  box-sizing: border-box;
+}
+.right-item-one-wrapper:first-child {
+  padding-top: 20px;
+  /*padding-left: 40px;*/
+  /*padding-right: 10px;*/
+  padding-bottom: 40px;
+}
+.right-item-one-wrapper:last-child {
+  padding-top: 20px;
+  /*padding-right: 40px;*/
+  /*padding-left: 10px;*/
+  padding-bottom: 40px;
+}
+/*six charts end*/
+
+/*seven charts start*/
+.right-item-two-wrapper {
+  height: 400px;
+  width: 100%;
+  /*padding-bottom: 40px;*/
+  padding-left: 50px;
+  /*padding-right: 40px;*/
+  box-sizing: border-box;
+}
+.right-item-two-charts {
+  width: 100%;
+  height: 100%;
+}
+/*seven charts end*/
+
+/*eight charts start*/
+.right-item-three-wrapper {
+  height: 400px;
+  width: 100%;
+  /*padding-bottom: 40px;*/
+  padding-left: 80px;
+  padding-right: 80px;
+  box-sizing: border-box;
+}
+.right-item-three-charts-wrapper {
+  width: 183px;
+  height: 183px;
+  margin-right: 100px;
+  margin-bottom: 20px;
+  float: left;
+}
+.right-item-three-charts-wrapper:last-child {
+  margin-right: 0px;
+}
+.right-item-three-charts {
+  width: 100%;
+  height: 100%;
+}
+/*eight charts end*/
+
+/*icon start*/
+/*.left2-item-icon-wrapper{
+	padding-left: 120px;
+	padding-top: 40px;
+	box-sizing: border-box;
+	width: 100%;
+}
+.left-item-icon-one{
+	padding-bottom: 60px;
+	width: 100%;
+	height: 160px;
+}
+.left-item-icon-one-img{
+	width: 160px;
+	height: 160px;
+	float: left;
+}
+.left-item-icon-one-img img{
+	width: 100%;
+	height: 100%;
+}
+.left-item-icon-one-text{
+	float: left;
+	padding-left: 10px;
+	width: 200px;
+	text-align: center;
+}
+.left-item-icon-one-num{
+	font-size: 40px;
+	font-weight: bold;
+	display: block;
+	padding-top: 30px;
+	padding-bottom: 10px;
+}
+.num1{
+	color: rgb(82,255,226);
+}
+.num2{
+	color: rgb(254,225,0);
+}
+.num3{
+	color: rgb(255,77,64);
+}
+.num4{
+	color: rgb(255,82,218);
+}
+.num5{
+	color: rgb(193,255,57);
+}
+.left-item-icon-one-title{
+	font-size: 32px;
+	display: block;
+}*/
+/*icon end*/
+
+.right-item-one-charts {
+  width: 100%;
+  height: 100%;
+}
