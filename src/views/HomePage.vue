@@ -135,17 +135,25 @@ export default {
         { type: "污泥", capacity: "75.00", generation: "0.95", percentage: "0.07%" },
         { type: "生物质", capacity: "60.00", generation: "1.99", percentage: "0.16%" },
       ],
+      charts: [], // 用于存储所有图表实例
     };
   },
   mounted() {
     this.$nextTick(() => {
-      this.initGaugeChart(this.$refs.gauge1, 64.34);
-      this.initGaugeChart(this.$refs.gauge2, 76.32);
-      this.initCoalChart();
-      this.initChemicalChart();
+      this.initCharts();
+      this.addResizeListener();
     });
   },
+  beforeUnmount() {
+    this.removeResizeListener();
+  },
   methods: {
+    initCharts() {
+      this.charts.push(this.initGaugeChart(this.$refs.gauge1, 64.34));
+      this.charts.push(this.initGaugeChart(this.$refs.gauge2, 76.32));
+      this.charts.push(this.initCoalChart());
+      this.charts.push(this.initChemicalChart());
+    },
     initGaugeChart(element, value) {
       const chart = echarts.init(element);
       const option = {
@@ -183,6 +191,7 @@ export default {
         ],
       };
       chart.setOption(option);
+      return chart;
     },
     initCoalChart() {
       const chart = echarts.init(this.$refs.coalChart);
@@ -201,6 +210,7 @@ export default {
         }],
         grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
       });
+      return chart;
     },
     initChemicalChart() {
       const chart = echarts.init(this.$refs.chemicalChart);
@@ -219,22 +229,34 @@ export default {
         }],
         grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
       });
-    }
+      return chart;
+    },
+    addResizeListener() {
+      window.addEventListener('resize', this.handleResize);
+    },
+    removeResizeListener() {
+      window.removeEventListener('resize', this.handleResize);
+    },
+    handleResize() {
+      this.charts.forEach(chart => {
+        chart.resize();
+      });
+    },
   },
 };
 </script>
 
 <style scoped>
-
 .card {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
 }
-
 
 .chart {
   width: 100%;
   height: 180px;
+  margin-bottom: 16px;
 }
 
 .databoxes-container {
@@ -344,5 +366,18 @@ export default {
 .label {
   font-size: 12px;
   color: #666;
+}
+
+/* 煤炭和煤化工产业卡片的特定样式 */
+.card.mb-16, 
+.card:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.card.mb-16 .chart,
+.card:last-child .chart {
+  flex-grow: 1;
+  min-height: 0;
 }
 </style>

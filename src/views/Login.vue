@@ -1,10 +1,10 @@
 <template>
   <div class="login-page">
     <div class="login-container">
-      <div class="header">
+      <header class="header">
         <img src="/src/assets/logo.png" alt="Logo" class="logo" />
         <span class="system-name">生产安全监控系统</span>
-      </div>
+      </header>
       <div class="login-banner">
         <img src="/src/assets/login-background.jpg" alt="Banner" class="banner" />
         <div class="login-box">
@@ -68,64 +68,47 @@
         </div>
       </div>
     </div>
-    <a-layout-footer class="footer">
+    <footer class="footer">
       <p>浙能集团统一认证中心 Zhejiang Provincial Energy Group Company Ltd.浙江省能源集团有限公司</p>
       <p>浙江浙能数字科技有限公司 人工运维热线: 0571-86664099 工作日 08:30-17:30</p>
-    </a-layout-footer>
+    </footer>
   </div>
 </template>
 
-<script>
-// 脚本部分保持不变
-import { defineComponent, reactive } from 'vue';
+<script setup>
+import { ref, reactive } from 'vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
 
-export default defineComponent({
-  name: 'LoginPage',
-  components: {
-    UserOutlined,
-    LockOutlined,
-  },
-  setup() {
-    const authStore = useAuthStore();
-    const router = useRouter();
+const authStore = useAuthStore();
+const router = useRouter();
 
-    const formState = reactive({
-      username: '',
-      password: '',
-    });
-
-    const vpnDownloadLink = '/vpn.exe';
-
-    const handleLogin = async (values) => {
-      try {
-        const success = await authStore.login(values.username, values.password);
-        if (success) {
-          message.success('登录成功！');
-          router.push('/admin');
-        } else {
-          message.error('用户名或密码错误，请重试。');
-        }
-      } catch (error) {
-        message.error(`登录失败: ${error.message || '未知错误'}`);
-      }
-    };
-
-    const quickLogin = () => {
-      message.warning('您未加入域，无法进行一键登录。');
-    };
-
-    return {
-      formState,
-      handleLogin,
-      quickLogin,
-      vpnDownloadLink,
-    };
-  },
+const formState = reactive({
+  username: '',
+  password: '',
 });
+
+const vpnDownloadLink = ref('/vpn.exe');
+
+const handleLogin = async (values) => {
+  try {
+    const success = await authStore.login(values.username, values.password);
+    if (success) {
+      message.success('登录成功！');
+      router.push('/admin');
+    } else {
+      message.error('用户名或密码错误，请重试。');
+    }
+  } catch (error) {
+    message.error(`登录失败: ${error.message || '未知错误'}`);
+  }
+};
+
+const quickLogin = () => {
+  message.warning('您未加入域，无法进行一键登录。');
+};
 </script>
 
 <style scoped>
@@ -193,7 +176,7 @@ export default defineComponent({
 }
 
 .login-form-wrapper {
-  padding-top: 40px; /* 保留上方空白 */
+  padding-top: 40px;
 }
 
 .login-form {
@@ -255,7 +238,6 @@ export default defineComponent({
   margin: 5px 0;
 }
 
-/* 添加一些响应式设计 */
 @media (max-width: 768px) {
   .login-banner {
     height: auto;
