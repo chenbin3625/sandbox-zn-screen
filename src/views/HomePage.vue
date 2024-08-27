@@ -6,13 +6,9 @@
         <!-- 电力产业 -->
         <a-card title="电力产业" class="card full-height">
           <a-row :gutter="16">
-            <a-col :span="12">
-              <div class="data-title">发电量</div>
-              <div ref="gauge1" class="chart"></div>
-            </a-col>
-            <a-col :span="12">
-              <div class="data-title">供热量</div>
-              <div ref="gauge2" class="chart"></div>
+            <a-col :span="12" v-for="(gauge, index) in gauges" :key="index">
+              <div class="data-title">{{ gauge.title }}</div>
+              <div :ref="el => { if (el) chartRefs[index] = el }" class="chart"></div>
             </a-col>
           </a-row>
           <a-row :gutter="8" class="mt-8">
@@ -27,18 +23,12 @@
             <table class="custom-table">
               <thead>
                 <tr>
-                  <th>类型</th>
-                  <th>装机容量(兆瓦)</th>
-                  <th>年发电量(亿千瓦时)</th>
-                  <th>占比</th>
+                  <th v-for="header in tableHeaders" :key="header">{{ header }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(item, index) in tableData" :key="index">
-                  <td>{{ item.type }}</td>
-                  <td>{{ item.capacity }}</td>
-                  <td>{{ item.generation }}</td>
-                  <td>{{ item.percentage }}</td>
+                  <td v-for="key in Object.keys(item)" :key="key">{{ item[key] }}</td>
                 </tr>
               </tbody>
             </table>
@@ -68,36 +58,24 @@
         <a-card title="煤炭产业" class="card mb-16">
           <div class="unit">单位：万吨</div>
           <div class="data-boxes">
-            <div class="data-box">
-              <div class="value primary">613.78 万吨</div>
-              <div class="label">当前库存</div>
-            </div>
-            <div class="data-box">
-              <div class="value">57.99%</div>
-              <div class="label">完成率</div>
-            </div>
-            <div class="data-box">
-              <div class="value negative">-3.7%</div>
-              <div class="label">同比增长</div>
+            <div v-for="(item, index) in coalIndustryData" :key="index" class="data-box">
+              <div :class="['value', item.valueClass]">{{ item.value }}</div>
+              <div class="label">{{ item.label }}</div>
             </div>
           </div>
-          <div ref="coalChart" class="chart"></div>
+          <div :ref="el => { if (el) chartRefs[2] = el }" class="chart"></div>
         </a-card>
 
         <!-- 煤化工产业 -->
         <a-card title="煤化工产业" class="card">
           <div class="unit">单位：亿标方</div>
           <div class="data-boxes">
-            <div class="data-box">
-              <div class="value">72.26%</div>
-              <div class="label">完成率</div>
-            </div>
-            <div class="data-box">
-              <div class="value negative">-5.63%</div>
-              <div class="label">同比增长</div>
+            <div v-for="(item, index) in chemicalIndustryData" :key="index" class="data-box">
+              <div :class="['value', item.valueClass]">{{ item.value }}</div>
+              <div class="label">{{ item.label }}</div>
             </div>
           </div>
-          <div ref="chemicalChart" class="chart"></div>
+          <div :ref="el => { if (el) chartRefs[3] = el }" class="chart"></div>
         </a-card>
       </a-col>
     </a-row>
@@ -105,146 +83,147 @@
 </template>
 
 <script>
+import { ref, onMounted, onUnmounted, nextTick } from 'vue';
 import * as echarts from "echarts";
 
 export default {
   name: "HomePage",
-  data() {
-    return {
-      dataBoxes: [
-        { title: "装机容量", value: "44667 兆瓦" },
-        { title: "权益容量", value: "30469 兆瓦" },
-        { title: "船舶总运力", value: "153 万吨" },
-        { title: "港口吞吐能力", value: "3000 万吨" },
-        { title: "城市燃气管网长度", value: "10273 公里" },
-        { title: "煤化工产能", value: "20 亿标方" },
-      ],
-      powerIndustryData: [
-        { title: "年累计发电量", value: "1,270.77" },
-        { title: "年计划发电量", value: "1,937.12" },
-        { title: "年累计供热量", value: "2,442.14" },
-        { title: "年计划供热量", value: "3,200" },
-      ],
-      tableData: [
-        { type: "煤机", capacity: "32025.00", generation: "1119.92", percentage: "88.13%" },
-        { type: "燃机", capacity: "4987.33", generation: "41.85", percentage: "3.29%" },
-        { type: "光伏", capacity: "3098.96", generation: "23.49", percentage: "1.85%" },
-        { type: "风电", capacity: "2489.75", generation: "37.07", percentage: "2.92%" },
-        { type: "水电", capacity: "1194.16", generation: "20.79", percentage: "1.64%" },
-        { type: "垃圾", capacity: "737.00", generation: "24.71", percentage: "1.94%" },
-        { type: "污泥", capacity: "75.00", generation: "0.95", percentage: "0.07%" },
-        { type: "生物质", capacity: "60.00", generation: "1.99", percentage: "0.16%" },
-      ],
-      charts: [], // 用于存储所有图表实例
-    };
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.initCharts();
-      this.addResizeListener();
-    });
-  },
-  beforeUnmount() {
-    this.removeResizeListener();
-  },
-  methods: {
-    initCharts() {
-      this.charts.push(this.initGaugeChart(this.$refs.gauge1, 64.34));
-      this.charts.push(this.initGaugeChart(this.$refs.gauge2, 76.32));
-      this.charts.push(this.initCoalChart());
-      this.charts.push(this.initChemicalChart());
-    },
-    initGaugeChart(element, value) {
+  setup() {
+    const chartRefs = ref([]);
+    const charts = ref([]);
+
+    const gauges = [
+      { title: "发电量", value: 64.34 },
+      { title: "供热量", value: 76.32 },
+    ];
+
+    const dataBoxes = [
+      { title: "装机容量", value: "44667 兆瓦" },
+      { title: "权益容量", value: "30469 兆瓦" },
+      { title: "船舶总运力", value: "153 万吨" },
+      { title: "港口吞吐能力", value: "3000 万吨" },
+      { title: "城市燃气管网长度", value: "10273 公里" },
+      { title: "煤化工产能", value: "20 亿标方" },
+    ];
+
+    const powerIndustryData = [
+      { title: "年累计发电量", value: "1,270.77" },
+      { title: "年计划发电量", value: "1,937.12" },
+      { title: "年累计供热量", value: "2,442.14" },
+      { title: "年计划供热量", value: "3,200" },
+    ];
+
+    const tableHeaders = ["类型", "装机容量(兆瓦)", "年发电量(亿千瓦时)", "占比"];
+
+    const tableData = [
+      { type: "煤机", capacity: "32025.00", generation: "1119.92", percentage: "88.13%" },
+      { type: "燃机", capacity: "4987.33", generation: "41.85", percentage: "3.29%" },
+      { type: "光伏", capacity: "3098.96", generation: "23.49", percentage: "1.85%" },
+      { type: "风电", capacity: "2489.75", generation: "37.07", percentage: "2.92%" },
+      { type: "水电", capacity: "1194.16", generation: "20.79", percentage: "1.64%" },
+      { type: "垃圾", capacity: "737.00", generation: "24.71", percentage: "1.94%" },
+      { type: "污泥", capacity: "75.00", generation: "0.95", percentage: "0.07%" },
+      { type: "生物质", capacity: "60.00", generation: "1.99", percentage: "0.16%" },
+    ];
+
+    const coalIndustryData = [
+      { value: "613.78 万吨", label: "当前库存", valueClass: "primary" },
+      { value: "57.99%", label: "完成率" },
+      { value: "-3.7%", label: "同比增长", valueClass: "negative" },
+    ];
+
+    const chemicalIndustryData = [
+      { value: "72.26%", label: "完成率" },
+      { value: "-5.63%", label: "同比增长", valueClass: "negative" },
+    ];
+
+    const initGaugeChart = (element, value) => {
       const chart = echarts.init(element);
       const option = {
-        series: [
-          {
-            type: "gauge",
-            progress: {
-              show: true,
-              width: 12,
-            },
-            axisLine: {
-              lineStyle: {
-                width: 12,
-              },
-            },
-            axisLabel: {
-              show: false,
-            },
-            pointer: {
-              itemStyle: {
-                color: "auto",
-              },
-            },
-            detail: {
-              fontSize: 12,
-              valueAnimation: true,
-              formatter: "{value}%",
-            },
-            data: [
-              {
-                value: value,
-              },
-            ],
+        series: [{
+          type: "gauge",
+          progress: { show: true, width: 12 },
+          axisLine: { lineStyle: { width: 12 } },
+          axisLabel: { show: false },
+          pointer: { itemStyle: { color: "auto" } },
+          detail: {
+            fontSize: 12,
+            valueAnimation: true,
+            formatter: "{value}%",
           },
-        ],
+          data: [{ value }],
+        }],
       };
       chart.setOption(option);
       return chart;
-    },
-    initCoalChart() {
-      const chart = echarts.init(this.$refs.coalChart);
+    };
+
+    const initBarChart = (element, data, color) => {
+      const chart = echarts.init(element);
       chart.setOption({
-        color: ['#1E3F8C', '#4872C2'],
+        color,
         xAxis: {
           type: 'category',
-          data: ['年计划供煤量', '7月底年累计供煤量'],
+          data: data.map(item => item.name),
           axisLabel: { interval: 0, rotate: 0 },
         },
         yAxis: { type: 'value' },
         series: [{
-          data: [6600.00, 3827.17],
+          data: data.map(item => item.value),
           type: 'bar',
           barWidth: '40%',
         }],
         grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
       });
       return chart;
-    },
-    initChemicalChart() {
-      const chart = echarts.init(this.$refs.chemicalChart);
-      chart.setOption({
-        color: ['#1E3F8C', '#4FBBD4'],
-        xAxis: {
-          type: 'category',
-          data: ['年计划产气量', '年累计产气量'],
-          axisLabel: { interval: 0, rotate: 0 },
-        },
-        yAxis: { type: 'value' },
-        series: [{
-          data: [19.20, 13.87],
-          type: 'bar',
-          barWidth: '40%',
-        }],
-        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+    };
+
+    const initCharts = () => {
+      charts.value = [
+        initGaugeChart(chartRefs.value[0], gauges[0].value),
+        initGaugeChart(chartRefs.value[1], gauges[1].value),
+        initBarChart(chartRefs.value[2], [
+          { name: '年计划供煤量', value: 6600.00 },
+          { name: '7月底年累计供煤量', value: 3827.17 }
+        ], ['#1E3F8C', '#4872C2']),
+        initBarChart(chartRefs.value[3], [
+          { name: '年计划产气量', value: 19.20 },
+          { name: '年累计产气量', value: 13.87 }
+        ], ['#1E3F8C', '#4FBBD4']),
+      ];
+    };
+
+    const handleResize = () => {
+      charts.value.forEach(chart => chart.resize());
+    };
+
+    onMounted(() => {
+      nextTick(() => {
+        initCharts();
+        window.addEventListener('resize', handleResize);
       });
-      return chart;
-    },
-    addResizeListener() {
-      window.addEventListener('resize', this.handleResize);
-    },
-    removeResizeListener() {
-      window.removeEventListener('resize', this.handleResize);
-    },
-    handleResize() {
-      this.charts.forEach(chart => {
-        chart.resize();
-      });
-    },
+    });
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', handleResize);
+      charts.value.forEach(chart => chart.dispose());
+    });
+
+    return {
+      chartRefs,
+      gauges,
+      dataBoxes,
+      powerIndustryData,
+      tableHeaders,
+      tableData,
+      coalIndustryData,
+      chemicalIndustryData,
+    };
   },
 };
 </script>
+
+
 
 <style scoped>
 .card {

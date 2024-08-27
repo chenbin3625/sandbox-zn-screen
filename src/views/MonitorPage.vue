@@ -212,7 +212,7 @@ export default defineComponent({
     };
 
     const handleSearch = () => {
-      message.info('搜索失败');
+      message.error('查询失败');
     };
 
     return {
