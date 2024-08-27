@@ -8,6 +8,7 @@
           <a-row :gutter="16">
             <a-col :span="12" v-for="(gauge, index) in gauges" :key="index">
               <div class="data-title">{{ gauge.title }}</div>
+              <div class="unit-text">{{ gauge.unit }}</div>
               <div :ref="el => { if (el) chartRefs[index] = el }" class="chart"></div>
             </a-col>
           </a-row>
@@ -93,8 +94,8 @@ export default {
     const charts = ref([]);
 
     const gauges = [
-      { title: "发电量", value: 64.34 },
-      { title: "供热量", value: 76.32 },
+      { title: "发电量", value: 64.34, unit: "单位：亿千瓦时" },
+      { title: "供热量", value: 76.32, unit: "单位：万吨" },
     ];
 
     const dataBoxes = [
@@ -223,8 +224,6 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
 .card {
   border-radius: 8px;
@@ -347,7 +346,6 @@ export default {
   color: #666;
 }
 
-/* 煤炭和煤化工产业卡片的特定样式 */
 .card.mb-16, 
 .card:last-child {
   display: flex;
@@ -358,5 +356,12 @@ export default {
 .card:last-child .chart {
   flex-grow: 1;
   min-height: 0;
+}
+
+.unit-text {
+  text-align: center;
+  color: #666;
+  font-size: 12px;
+  margin-bottom: 4px;
 }
 </style>
