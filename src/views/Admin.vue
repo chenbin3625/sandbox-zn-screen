@@ -87,7 +87,6 @@ onMounted(() => {
   if (!authStore.isAuthenticated) {
     router.push('/')
   }
-  document.title = '管理后台-浙能集团生产安全监控'
   currentComponent.value = componentMap.home
 })
 </script>
