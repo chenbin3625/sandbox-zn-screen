@@ -77,7 +77,6 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
