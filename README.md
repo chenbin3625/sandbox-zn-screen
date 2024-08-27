@@ -1,25 +1,19 @@
-# znscreen
+# zn大屏沙箱
 
-## Project Setup
+## 项目设置
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### 编译并进行开发环境的热重载
 
 ```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
+### 编译并为生产环境进行压缩
 
 ```sh
 npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```
