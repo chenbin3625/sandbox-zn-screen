@@ -7,13 +7,30 @@ const routes = [
     path: '/',
     name: 'login',
     component: () => import('../views/Login.vue'),
-    meta: { requiresAuth: false }
+    meta: { 
+      requiresAuth: false,
+      title: '登录 - 浙能生产安全监控系统'
+    }
   },
   {
     path: '/admin',
     name: 'admin',
     component: () => import('../views/Admin.vue'),
-    meta: { requiresAuth: true }
+    meta: { 
+      requiresAuth: true,
+      title: '管理后台 - 浙能生产安全监控系统'
+    }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    redirect: to => {
+      const authStore = useAuthStore()
+      return authStore.isAuthenticated ? { name: 'admin' } : { name: 'login' }
+    },
+    meta: {
+      title: '页面未找到 - 浙能生产安全监控系统'
+    }
   }
 ]
 
@@ -24,13 +41,23 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-  await authStore.loadAuth()
 
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+  if (!authStore.isAuthenticated) {
+    await authStore.loadAuth()
+  }
+
+  // 设置页面标题
+  document.title = to.meta.title || '浙能生产安全监控系统'
+
+  if (to.name === 'not-found') {
+    const redirectPath = authStore.isAuthenticated ? '后台管理页' : '登录页'
+    message.warning(`路由 "${to.fullPath}" 不存在，正在跳转${redirectPath}`)
+    next(authStore.isAuthenticated ? { name: 'admin' } : { name: 'login' })
+  } else if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     message.warning('请先登录')
-    next('/')
-  } else if (to.path === '/' && authStore.isAuthenticated) {
-    next('/admin')
+    next({ name: 'login' })
+  } else if (to.name === 'login' && authStore.isAuthenticated) {
+    next({ name: 'admin' })
   } else {
     next()
   }
