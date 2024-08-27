@@ -1,267 +1,272 @@
 <template>
-    <div class="login-page">
-        <div class="login-container">
-            <div class="header">
-                <img src="/src/assets/logo.png" alt="Logo" class="logo" />
-                <span class="system-name">生产安全监控系统</span>
-            </div>
-            <div class="login-banner">
-                <img src="/src/assets/login-background.jpg" alt="Banner" class="banner" />
-                <div class="login-box">
-                    <div class="login-form">
-                        <label for="username">用户名:</label>
-                        <input type="text" id="username" v-model="username" placeholder="请输入用户名"
-                            @input="clearError('username')" />
-                        <span class="error-message" v-if="errors.username">{{ errors.username }}</span>
+  <div class="login-page">
+    <div class="login-container">
+      <div class="header">
+        <img src="/src/assets/logo.png" alt="Logo" class="logo" />
+        <span class="system-name">生产安全监控系统</span>
+      </div>
+      <div class="login-banner">
+        <img src="/src/assets/login-background.jpg" alt="Banner" class="banner" />
+        <div class="login-box">
+          <div class="login-form-wrapper">
+            <a-form
+              :model="formState"
+              @finish="handleLogin"
+              class="login-form"
+            >
+              <a-form-item
+                name="username"
+                :rules="[{ required: true, message: '请输入用户名' }]"
+              >
+                <a-input
+                  v-model:value="formState.username"
+                  placeholder="请输入用户名"
+                >
+                  <template #prefix>
+                    <UserOutlined class="site-form-item-icon" />
+                  </template>
+                </a-input>
+              </a-form-item>
 
-                        <label for="password">密码:</label>
-                        <input type="password" id="password" v-model="password" placeholder="请输入密码"
-                            @input="clearError('password')" />
-                        <span class="error-message" v-if="errors.password">{{ errors.password }}</span>
+              <a-form-item
+                name="password"
+                :rules="[{ required: true, message: '请输入密码' }]"
+              >
+                <a-input-password
+                  v-model:value="formState.password"
+                  placeholder="请输入密码"
+                >
+                  <template #prefix>
+                    <LockOutlined class="site-form-item-icon" />
+                  </template>
+                </a-input-password>
+              </a-form-item>
 
-                        <a href="#" class="forgot-password">忘记账号密码?</a>
-                        <button class="login-btn" @click="handleLogin">登录</button>
-                        <!-- Update the domain-computer-link to trigger download -->
-                        <a :href="vpnDownloadLink" class="domain-computer-link" download>已加域电脑</a>
-                        <button class="quick-login-btn" @click="quickLogin">一键登录</button>
-                    </div>
-                </div>
-            </div>
+              <a-form-item class="forgot-password-item">
+                <a class="forgot-password" href="#">忘记账号密码?</a>
+              </a-form-item>
+
+              <a-form-item class="button-item">
+                <a-button type="primary" html-type="submit" class="login-btn" block>
+                  登录
+                </a-button>
+              </a-form-item>
+
+              <a-form-item class="button-item">
+                <a :href="vpnDownloadLink" class="domain-computer-link" download>
+                  已加域电脑
+                </a>
+              </a-form-item>
+
+              <a-form-item class="button-item">
+                <a-button @click="quickLogin" class="quick-login-btn" block>
+                  一键登录
+                </a-button>
+              </a-form-item>
+            </a-form>
+          </div>
         </div>
-        <footer class="footer">
-            <p>浙能集团统一认证中心 Zhejiang Provincial Energy Group Company Ltd.浙江省能源集团有限公司</p>
-            <p>浙江浙能数字科技有限公司 人工运维热线: 0571-86664099 工作日 08:30-17:30</p>
-        </footer>
+      </div>
     </div>
+    <a-layout-footer class="footer">
+      <p>浙能集团统一认证中心 Zhejiang Provincial Energy Group Company Ltd.浙江省能源集团有限公司</p>
+      <p>浙江浙能数字科技有限公司 人工运维热线: 0571-86664099 工作日 08:30-17:30</p>
+    </a-layout-footer>
+  </div>
 </template>
 
 <script>
-import { ref, reactive, onMounted } from 'vue'
-import { useAuthStore } from '../stores/auth'
-import { useRouter } from 'vue-router'
+// 脚本部分保持不变
+import { defineComponent, reactive } from 'vue';
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+import { message } from 'ant-design-vue';
+import { useAuthStore } from '../stores/auth';
+import { useRouter } from 'vue-router';
 
-export default {
-    name: 'LoginPage',
-    setup() {
-        const authStore = useAuthStore()
-        const router = useRouter()
-        const username = ref('')
-        const password = ref('')
-        const errors = reactive({
-            username: '',
-            password: ''
-        })
+export default defineComponent({
+  name: 'LoginPage',
+  components: {
+    UserOutlined,
+    LockOutlined,
+  },
+  setup() {
+    const authStore = useAuthStore();
+    const router = useRouter();
 
-        const vpnDownloadLink = '/vpn.exe' // Link to the VPN executable
+    const formState = reactive({
+      username: '',
+      password: '',
+    });
 
-        const validateInputs = () => {
-            let isValid = true
+    const vpnDownloadLink = '/vpn.exe';
 
-            if (!username.value.trim()) {
-                errors.username = '用户名不能为空。'
-                isValid = false
-            } else if (username.value.length < 3) {
-                errors.username = '用户名长度不能少于3个字符。'
-                isValid = false
-            }
-
-            if (!password.value.trim()) {
-                errors.password = '密码不能为空。'
-                isValid = false
-            } else if (password.value.length < 5) {
-                errors.password = '密码长度不能少于5个字符。'
-                isValid = false
-            }
-
-            return isValid
+    const handleLogin = async (values) => {
+      try {
+        const success = await authStore.login(values.username, values.password);
+        if (success) {
+          message.success('登录成功！');
+          router.push('/admin');
+        } else {
+          message.error('用户名或密码错误，请重试。');
         }
+      } catch (error) {
+        message.error(`登录失败: ${error.message || '未知错误'}`);
+      }
+    };
 
-        const clearError = (field) => {
-            errors[field] = ''
-        }
+    const quickLogin = () => {
+      message.warning('您未加入域，无法进行一键登录。');
+    };
 
-        const handleLogin = async () => {
-            if (!validateInputs()) {
-                return
-            }
-
-            setTimeout(async () => {
-                try {
-                    const success = await authStore.login(username.value, password.value)
-                    if (success) {
-                        alert('登录成功！')
-                        router.push('/admin')
-                    } else {
-                        alert('用户名或密码错误，请重试。')
-                    }
-                } catch (error) {
-                    alert(`登录失败: ${error.message || '未知错误'}`)
-                }
-            }, 500) // 0.5 seconds delay
-        }
-
-        const quickLogin = () => {
-            alert('您未加入域，无法进行一键登录。')
-        }
-
-        const checkIfLoggedIn = () => {
-            if (authStore.isAuthenticated) {
-                router.push('/admin')
-            }
-        }
-
-        onMounted(checkIfLoggedIn)
-
-        return {
-            username,
-            password,
-            errors,
-            handleLogin,
-            quickLogin,
-            clearError,
-            vpnDownloadLink
-        }
-    }
-}
+    return {
+      formState,
+      handleLogin,
+      quickLogin,
+      vpnDownloadLink,
+    };
+  },
+});
 </script>
-
-
 
 <style scoped>
 .login-page {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
-    background-image: url('/src/assets/background.jpg');
-    /* Add your background image path here */
-    background-size: cover;
-    background-position: center;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  background-image: url('/src/assets/background.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 .login-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .header {
-    display: flex;
-    align-items: center;
-    margin: 20px 0 10px 20px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
 }
 
 .logo {
-    margin-right: 10px;
+  margin-right: 15px;
 }
 
 .system-name {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
+  font-size: 28px;
+  font-weight: bold;
+  color: #000000;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .login-banner {
-    width: 1100px;
-    height: 450px;
-    position: relative;
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  height: 500px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .banner {
-    width: 100%;
-    height: 100%;
-    position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .login-box {
-    position: absolute;
-    top: 50%;
-    right: 5%;
-    transform: translateY(-50%);
-    width: 350px;
-    height: 350px;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 50%;
+  right: 5%;
+  transform: translateY(-50%);
+  width: 380px;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-form-wrapper {
+  padding-top: 40px; /* 保留上方空白 */
 }
 
 .login-form {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
 }
 
-.login-form label {
-    margin-top: 10px;
-    text-align: left;
-    color: #333;
+.forgot-password-item {
+  margin-bottom: 15px;
 }
 
-.login-form input {
-    margin-top: 5px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+.button-item {
+  margin-bottom: 10px;
 }
 
 .forgot-password {
-    margin-top: 10px;
-    font-size: 12px;
-    color: #0066cc;
-    text-align: right;
-}
-
-.login-btn,
-.quick-login-btn {
-    margin-top: 10px;
-    padding: 10px;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  float: right;
+  font-size: 14px;
+  color: #1890ff;
 }
 
 .login-btn {
-    background-color: #1c7ecb;
+  background-color: #1c7ecb;
+  border-color: #1c7ecb;
+  height: 40px;
+  font-size: 16px;
 }
 
 .quick-login-btn {
-    background-color: #2b9e2b;
+  background-color: #2b9e2b;
+  border-color: #2b9e2b;
+  color: #fff;
+  height: 40px;
+  font-size: 16px;
 }
 
 .domain-computer-link {
-    display: block;
-    margin-top: 10px;
-    text-align: center;
-    color: #0066cc;
-    text-decoration: none;
-    font-size: 14px;
+  display: block;
+  text-align: center;
+  color: #0066cc;
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 15px;
 }
 
 .domain-computer-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .footer {
-    background-color: #f4f4f4;
-    padding: 10px;
-    text-align: center;
-    font-size: 12px;
-    color: #666;
+  background-color: rgba(244, 244, 244, 0.8);
+  padding: 15px;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
 }
 
 .footer p {
-    margin: 5px 0;
+  margin: 5px 0;
 }
 
-.error-message {
-    color: red;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
+/* 添加一些响应式设计 */
+@media (max-width: 768px) {
+  .login-banner {
+    height: auto;
+  }
+
+  .login-box {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: 380px;
+    margin: 20px auto;
+  }
 }
 </style>

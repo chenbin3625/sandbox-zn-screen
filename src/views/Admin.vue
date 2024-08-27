@@ -1,200 +1,249 @@
 <template>
-    <div class="admin-page">
-        <header>
-            <h1>浙能集团生产安全监控</h1>
-            <div class="user-info">
-                <span>用户：{{ username }}</span>
-                <button @click="logout" class="logout-btn">退出</button>
-            </div>
-        </header>
-        <div class="main-content">
-            <aside class="sidebar">
-                <button v-for="(item, index) in menuItems" :key="index" @click="activeMenu = item.key"
-                    :class="{ active: activeMenu === item.key }">
-                    <img :src="item.icon" :alt="item.label" />
-                    {{ item.label }}
-                </button>
-            </aside>
-            <main>
-                <iframe :src="currentIframeSrc" frameborder="0"></iframe>
-            </main>
+    <a-layout class="layout">
+      <a-layout-header class="header">
+        <div class="logo-title">
+          <img src="/src/assets/logo-mini.png" alt="Logo" class="logo" />
+          <span class="title">浙能集团生产安全监控系统</span>
         </div>
-    </div>
-</template>
-
-<script>
-import { ref, computed, onMounted } from 'vue'
-import { useAuthStore } from '../stores/auth'
-import { useRouter } from 'vue-router'
-
-export default {
+        <a-menu
+          v-model:selectedKeys="selectedKeys"
+          mode="horizontal"
+          class="header-menu"
+          @select="handleMenuSelect"
+        >
+          <a-menu-item key="home">首页</a-menu-item>
+          <a-menu-item key="screen">二楼大屏</a-menu-item>
+          <a-menu-item key="monitor">数据监控</a-menu-item>
+        </a-menu>
+        <div class="user-info">
+          <span>用户名：{{ username }}</span>
+          <a-button @click="showLogoutConfirm" class="logout-btn">退出</a-button>
+        </div>
+      </a-layout-header>
+      <a-layout-content class="content">
+        <component :is="currentComponent"></component>
+      </a-layout-content>
+  
+      <!-- 退出确认对话框 -->
+      <a-modal
+        v-model:visible="logoutModalVisible"
+        title="确认退出"
+        @ok="handleLogout"
+        @cancel="cancelLogout"
+        okText="确认"
+        cancelText="取消"
+      >
+        <p>您确定要退出系统吗？</p>
+      </a-modal>
+    </a-layout>
+  </template>
+  
+  <script>
+  // Script 部分保持不变
+  import { ref, computed, onMounted, defineAsyncComponent, shallowRef, markRaw } from 'vue'
+  import { useAuthStore } from '../stores/auth'
+  import { useRouter } from 'vue-router'
+  import { Layout, Menu, Button, Modal, message } from 'ant-design-vue'
+  
+  export default {
     name: 'AdminPage',
+    components: {
+      ALayout: Layout,
+      ALayoutHeader: Layout.Header,
+      ALayoutContent: Layout.Content,
+      AMenu: Menu,
+      AMenuItem: Menu.Item,
+      AButton: Button,
+      AModal: Modal,
+    },
     setup() {
-        const authStore = useAuthStore()
-        const router = useRouter()
-
-        const activeMenu = ref('overview')
-
-        const menuItems = [
-            { key: 'overview', label: '全景图', icon: '/elecscreen/img/全景.png', iframe: '/elecscreen/overallView.html' },
-            { key: 'windPower', label: '风电项目', icon: '/elecscreen/img/风电.png', iframe: '/elecscreen/windPower.html' },
-            { key: 'intelligent', label: '智慧台区', icon: '/elecscreen/img/智慧平台.png', iframe: '/elecscreen/intelligent.html' },
-        ]
-
-        const currentIframeSrc = computed(() => {
-            const item = menuItems.find(item => item.key === activeMenu.value)
-            return item ? item.iframe : ''
-        })
-
-        const logout = () => {
-            authStore.logout()
-            alert('退出成功！')
-            router.push('/')
+      const authStore = useAuthStore()
+      const router = useRouter()
+  
+      const selectedKeys = ref(['home'])
+      const username = computed(() => authStore.user?.username || 'admin')
+      const logoutModalVisible = ref(false)
+      const currentComponent = shallowRef(null)
+  
+      const showLogoutConfirm = () => {
+        logoutModalVisible.value = true
+      }
+  
+      const handleLogout = () => {
+        authStore.logout()
+        logoutModalVisible.value = false
+        message.success('退出成功')
+        router.push('/')
+      }
+  
+      const cancelLogout = () => {
+        logoutModalVisible.value = false
+      }
+  
+      const handleMenuSelect = ({ key }) => {
+        selectedKeys.value = [key]
+        switch (key) {
+          case 'home':
+            currentComponent.value = markRaw(defineAsyncComponent(() => import('./HomePage.vue')))
+            break
+          case 'screen':
+            currentComponent.value = markRaw(defineAsyncComponent(() => import('./ScreenPage.vue')))
+            break
+          case 'monitor':
+            currentComponent.value = markRaw(defineAsyncComponent(() => import('./MonitorPage.vue')))
+            break
         }
-
-        onMounted(() => {
-            if (!authStore.isAuthenticated) {
-                router.push('/')
-            }
-            document.title = '管理后台-浙能集团生产安全监控'
-        })
-
-        return {
-            username: authStore.username,
-            logout,
-            menuItems,
-            activeMenu,
-            currentIframeSrc
+      }
+  
+      onMounted(() => {
+        if (!authStore.isAuthenticated) {
+          router.push('/')
         }
-    }
-}
-</script>
-
-
-<style scoped>
-html,
-body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-}
-
-.admin-page {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #1a2a6c, #2a4858, #2c3e50);
-    color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-header {
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: 0.8rem 2rem;
+        document.title = '管理后台-浙能集团生产安全监控'
+        // 初始化显示首页
+        currentComponent.value = markRaw(defineAsyncComponent(() => import('./HomePage.vue')))
+      })
+  
+      return {
+        selectedKeys,
+        username,
+        logoutModalVisible,
+        currentComponent,
+        showLogoutConfirm,
+        handleLogout,
+        cancelLogout,
+        handleMenuSelect,
+      }
+    },
+  }
+  </script>
+  
+  <style scoped>
+  .layout {
+    min-height: 100vh;
+  }
+  
+  .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-h1 {
+    background: #001529;
+    padding: 0 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .logo-title {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    height: 40px;
+    margin-right: 16px;
+  }
+  
+  .title {
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .header-menu {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    background: transparent;
+    border-bottom: none;
+  }
+  
+  :deep(.ant-menu-horizontal) {
+    line-height: 64px;
+    border-bottom: none;
+  }
+  
+  :deep(.ant-menu-item) {
+    color: #fff;
+    font-size: 16px;
+    margin: 0 10px;
+    padding: 0 15px;
+    transition: all 0.3s ease;
+  }
+  
+  :deep(.ant-menu-item:hover) {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #1890ff;
+  }
+  
+  :deep(.ant-menu-item-selected) {
+    background-color: rgba(24, 144, 255, 0.2) !important;
+    color: #1890ff !important;
+    font-weight: bold;
+  }
+  
+  :deep(.ant-menu-item-selected::after) {
+    border-bottom: 2px solid #1890ff !important;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    color: #fff;
+  }
+  
+  .user-info span {
+    margin-right: 16px;
+  }
+  
+  .logout-btn {
+    color: #fff;
+    background-color: #ff4d4f;
+    border-color: #ff4d4f;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  
+  .logout-btn:hover {
+    background-color: #ff7875;
+    border-color: #ff7875;
+  }
+  
+  .content {
+    background: #f0f2f5;
+    padding: 24px;
     margin: 0;
-    font-size: 1.6rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-}
-
-.user-info span {
-    margin-right: 1rem;
-    font-size: 1rem;
-}
-
-.logout-btn {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.logout-btn:hover {
-    background-color: #c0392b;
-    transform: translateY(-2px);
-}
-
-.main-content {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-}
-
-.sidebar {
-    width: 100px;
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 1rem 0;
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar button {
-    background-color: transparent;
-    border: none;
-    color: #ecf0f1;
-    padding: 1rem 1rem;
-    margin-bottom: 0.5rem;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    border-radius: 4px;
-}
-
-.sidebar button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
-}
-
-.sidebar button.active {
-    background-color: rgba(52, 152, 219, 0.5);
-    font-weight: 600;
-}
-
-.sidebar button img {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 0.5rem;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-}
-
-.sidebar button:hover img {
-    opacity: 1;
-}
-
-main {
-    flex: 1;
-    overflow: hidden;
-    border-radius: 4px;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-</style>
+    min-height: calc(100vh - 64px);
+  }
+  
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      height: auto;
+      padding: 12px;
+    }
+  
+    .logo-title {
+      margin-bottom: 12px;
+    }
+  
+    .title {
+      font-size: 16px;
+    }
+  
+    .logo {
+      height: 32px;
+    }
+  
+    .header-menu {
+      width: 100%;
+    }
+  
+    :deep(.ant-menu-item) {
+      margin: 0 5px;
+      padding: 0 10px;
+    }
+  
+    .user-info {
+      margin-top: 12px;
+    }
+  }
+  </style>
