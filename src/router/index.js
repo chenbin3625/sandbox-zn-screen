@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { message } from 'ant-design-vue'
 
 const routes = [
   {
@@ -47,12 +46,16 @@ const routes = [
   },
   {
     path: '/',
-    redirect: '/admin'
+    name: 'root',
+    redirect: (to) => {
+      const authStore = useAuthStore()
+      return authStore.isAuthenticated ? { name: 'admin-home' } : { name: 'login' }
+    }
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
-    redirect: () => {
+    redirect: (to) => {
       const authStore = useAuthStore()
       return authStore.isAuthenticated ? { name: 'admin-home' } : { name: 'login' }
     },
@@ -77,13 +80,8 @@ router.beforeEach(async (to, from, next) => {
   // 设置页面标题
   document.title = to.meta.title || '浙能集团生产安全监控系统'
 
-  if (to.name === 'not-found') {
-    const redirectPath = authStore.isAuthenticated ? '管理后台首页' : '登录页'
-    message.warning(`路由 "${to.fullPath}" 不存在，正在跳转到${redirectPath}`)
-    next(authStore.isAuthenticated ? { name: 'admin-home' } : { name: 'login' })
-  } else if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    message.warning('请先登录')
-    next({ name: 'login' })
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next({ name: 'login', query: { redirect: to.fullPath } })
   } else if (to.name === 'login' && authStore.isAuthenticated) {
     next({ name: 'admin-home' })
   } else {
