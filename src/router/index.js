@@ -16,8 +16,7 @@ const routes = [
     path: '/admin',
     component: () => import('../views/AdminPage.vue'),
     meta: {
-      requiresAuth: true,
-      title: '管理后台 - 浙能集团生产安全监控系统'
+      requiresAuth: true
     },
     children: [
       {
