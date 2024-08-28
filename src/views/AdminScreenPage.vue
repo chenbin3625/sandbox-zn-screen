@@ -543,7 +543,7 @@ export default {
 }
 
 .layout-image {
-  width: 95%;
+  width: 100%;
   height: auto;
   display: block;
   border-radius: 0 0 8px 8px;
