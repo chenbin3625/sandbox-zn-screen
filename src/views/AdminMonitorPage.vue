@@ -29,15 +29,28 @@
         </a-form-item>
       </a-form>
 
-      <a-table
-        :columns="columns"
-        :data-source="paginatedData"
-        :loading="loading"
-        :pagination="pagination"
-        @change="handleTableChange"
-        class="dashboard-table"
-      >
-      </a-table>
+      <div class="dashboard-table-container">
+        <a-table
+          :columns="columns"
+          :data-source="paginatedData"
+          :loading="loading"
+          :pagination="false"
+          @change="handleTableChange"
+          class="dashboard-table"
+        >
+        </a-table>
+        <div class="dashboard-pagination">
+          <a-pagination
+            v-model:current="pagination.current"
+            :total="pagination.total"
+            :pageSize="pagination.pageSize"
+            :showSizeChanger="pagination.showSizeChanger"
+            :showQuickJumper="pagination.showQuickJumper"
+            :showTotal="pagination.showTotal"
+            @change="handlePaginationChange"
+          />
+        </div>
+      </div>
     </div>
   </a-config-provider>
 </template>
@@ -201,6 +214,11 @@ export default defineComponent({
       pagination.pageSize = pag.pageSize;
     };
 
+    const handlePaginationChange = (page, pageSize) => {
+      pagination.current = page;
+      pagination.pageSize = pageSize;
+    };
+
     onMounted(() => {
       handleSearch();
     });
@@ -215,6 +233,7 @@ export default defineComponent({
       pagination,
       handleSearch,
       handleTableChange,
+      handlePaginationChange,
       companies,
       equipments,
       exceptionTypes,
@@ -226,23 +245,32 @@ export default defineComponent({
 
 <style scoped>
 .dashboard {
-  padding: 20px;
+  padding: 30px;
   background-color: #f0f2f5;
 }
 
 .dashboard-form {
   background-color: white;
-  padding: 24px;
+  padding: 30px;
   border-radius: 8px;
   margin-bottom: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.dashboard-table {
+.dashboard-table-container {
   background-color: white;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-table {
+  margin-bottom: 0;
+}
+
+.dashboard-pagination {
+  padding: 16px 24px;
+  text-align: right;
 }
 
 :deep(.dashboard-table .ant-table-thead > tr > th) {

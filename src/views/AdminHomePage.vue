@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard">
-    <a-row :gutter="16">
+    <a-row type="flex" justify="center" :gutter="16">
       <!-- 第一行 -->
       <a-col :span="7">
         <!-- 电力产业 -->
@@ -37,7 +37,7 @@
         </a-card>
       </a-col>
 
-      <a-col :span="11">
+      <a-col :span="9">
         <!-- 数据一览 -->
         <a-card title="数据一览" class="card mb-16">
           <div class="databoxes-container">
