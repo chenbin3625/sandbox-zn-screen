@@ -6,8 +6,8 @@ const routes = [
   {
     path: '/',
     name: 'login',
-    component: () => import('../views/Login.vue'),
-    meta: { 
+    component: () => import('../views/LoginPage.vue'),
+    meta: {
       requiresAuth: false,
       title: '登录 - 浙能生产安全监控系统'
     }
@@ -15,8 +15,8 @@ const routes = [
   {
     path: '/admin',
     name: 'admin',
-    component: () => import('../views/Admin.vue'),
-    meta: { 
+    component: () => import('../views/AdminPage.vue'),
+    meta: {
       requiresAuth: true,
       title: '管理后台 - 浙能生产安全监控系统'
     }
@@ -24,7 +24,7 @@ const routes = [
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
-    redirect: to => {
+    redirect: (to) => {
       const authStore = useAuthStore()
       return authStore.isAuthenticated ? { name: 'admin' } : { name: 'login' }
     },
