@@ -24,7 +24,7 @@ const routes = [
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
-    redirect: (to) => {
+    redirect: () => {
       const authStore = useAuthStore()
       return authStore.isAuthenticated ? { name: 'admin' } : { name: 'login' }
     },
