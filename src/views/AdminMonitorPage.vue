@@ -1,47 +1,54 @@
 <template>
-  <div class="dashboard">
-    <a-form
-      :model="formState"
-      layout="inline"
-      class="dashboard-form"
-    >
-      <a-form-item label="所属企业" name="company">
-        <a-select v-model:value="formState.company" style="width: 200px" placeholder="请选择" @change="handleSearch">
-          <a-select-option value="">全部</a-select-option>
-          <a-select-option v-for="company in companies" :key="company" :value="company">{{ company }}</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item label="所属设备" name="equipment">
-        <a-select v-model:value="formState.equipment" style="width: 200px" placeholder="请选择" @change="handleSearch">
-          <a-select-option value="">全部</a-select-option>
-          <a-select-option v-for="equipment in equipments" :key="equipment" :value="equipment">{{ equipment }}</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item label="异常类型" name="exceptionType">
-        <a-select v-model:value="formState.exceptionType" style="width: 200px" placeholder="请选择" @change="handleSearch">
-          <a-select-option value="">全部</a-select-option>
-          <a-select-option v-for="type in exceptionTypes" :key="type" :value="type">{{ type }}</a-select-option>
-        </a-select>
-      </a-form-item>
-      <a-form-item label="异常时间" name="dateRange">
-        <a-range-picker v-model:value="formState.dateRange" @change="handleSearch" />
-      </a-form-item>
-    </a-form>
+  <a-config-provider :locale="locale">
+    <div class="dashboard">
+      <a-form
+        :model="formState"
+        layout="inline"
+        class="dashboard-form"
+      >
+        <a-form-item label="所属企业" name="company">
+          <a-select v-model:value="formState.company" style="width: 200px" placeholder="请选择" @change="handleSearch">
+            <a-select-option value="">全部</a-select-option>
+            <a-select-option v-for="company in companies" :key="company" :value="company">{{ company }}</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="所属设备" name="equipment">
+          <a-select v-model:value="formState.equipment" style="width: 200px" placeholder="请选择" @change="handleSearch">
+            <a-select-option value="">全部</a-select-option>
+            <a-select-option v-for="equipment in equipments" :key="equipment" :value="equipment">{{ equipment }}</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="异常类型" name="exceptionType">
+          <a-select v-model:value="formState.exceptionType" style="width: 200px" placeholder="请选择" @change="handleSearch">
+            <a-select-option value="">全部</a-select-option>
+            <a-select-option v-for="type in exceptionTypes" :key="type" :value="type">{{ type }}</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="异常时间" name="dateRange">
+          <a-range-picker v-model:value="formState.dateRange" @change="handleSearch" />
+        </a-form-item>
+      </a-form>
 
-    <a-table
-      :columns="columns"
-      :data-source="paginatedData"
-      :loading="loading"
-      :pagination="pagination"
-      @change="handleTableChange"
-      class="dashboard-table"
-    >
-    </a-table>
-  </div>
+      <a-table
+        :columns="columns"
+        :data-source="paginatedData"
+        :loading="loading"
+        :pagination="pagination"
+        @change="handleTableChange"
+        class="dashboard-table"
+      >
+      </a-table>
+    </div>
+  </a-config-provider>
 </template>
 
 <script>
 import { defineComponent, ref, reactive, onMounted, computed, watch } from 'vue';
+import zhCN from 'ant-design-vue/es/locale/zh_CN';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+
+dayjs.locale('zh-cn');
 
 const generateRandomData = (count) => {
   const sampleData = [
@@ -107,13 +114,8 @@ const generateRandomData = (count) => {
     const sampleIndex = Math.floor(Math.random() * sampleData.length);
     const sample = sampleData[sampleIndex];
 
-    // Generate random start time within the last 30 days
     const startTime = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000);
-    
-    // Generate random end time between start time and now
     const endTime = new Date(startTime.getTime() + Math.random() * (Date.now() - startTime.getTime()));
-    
-    // Calculate duration in hours
     const durationHours = (endTime - startTime) / (1000 * 60 * 60);
 
     return {
@@ -169,6 +171,8 @@ export default defineComponent({
       showTotal: (total) => `共 ${total} 条数据`,
     });
 
+    const locale = ref(zhCN);
+
     const paginatedData = computed(() => {
       const start = (pagination.current - 1) * pagination.pageSize;
       const end = start + pagination.pageSize;
@@ -214,6 +218,7 @@ export default defineComponent({
       companies,
       equipments,
       exceptionTypes,
+      locale,
     };
   },
 });
