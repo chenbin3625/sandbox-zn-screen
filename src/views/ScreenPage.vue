@@ -69,7 +69,7 @@
 
         <!-- 煤化工产业 -->
         <a-card title="煤化工产业" class="card">
-          <div class="unit">单位：亿标方</div>
+          <div class="unit">单位：亿标立方</div>
           <div class="data-boxes">
             <div v-for="(item, index) in chemicalIndustryData" :key="index" class="data-box">
               <div :class="['value', item.valueClass]">{{ item.value }}</div>
@@ -128,7 +128,6 @@ export default {
     ];
 
     const coalIndustryData = [
-      { value: "613.78 万吨", label: "当前库存", valueClass: "primary" },
       { value: "57.99%", label: "完成率" },
       { value: "-3.7%", label: "同比增长", valueClass: "negative" },
     ];

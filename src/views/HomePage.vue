@@ -69,7 +69,7 @@
 
         <!-- 煤化工产业 -->
         <a-card title="煤化工产业" class="card">
-          <div class="unit">单位：亿标方</div>
+          <div class="unit">单位：亿标立方</div>
           <div class="data-boxes">
             <div v-for="(item, index) in chemicalIndustryData" :key="index" class="data-box">
               <div :class="['value', item.valueClass]">{{ item.value }}</div>
