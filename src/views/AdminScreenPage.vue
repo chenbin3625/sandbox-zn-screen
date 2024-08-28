@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard">
-    <a-row :gutter="16">
+    <a-row type="flex" justify="center" :gutter="16">
       <!-- 第一列 -->
       <a-col :span="6">
         <!-- 电力产业 -->
@@ -27,7 +27,7 @@
       </a-col>
 
       <!-- 第二列 -->
-      <a-col :span="8">
+      <a-col :span="6">
         <!-- 数据一览 -->
         <a-card title="煤炭产业数据" class="card mb-16">
           <a-row :gutter="[16, 16]" class="data-overview">
