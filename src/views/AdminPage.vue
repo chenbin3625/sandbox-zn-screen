@@ -21,7 +21,7 @@
       </div>
     </a-layout-header>
     <a-layout-content class="content">
-      <component :is="currentComponent" />
+      <router-view></router-view>
     </a-layout-content>
 
     <a-modal
@@ -38,10 +38,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, defineAsyncComponent, shallowRef, markRaw } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
-import {  message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -49,19 +49,12 @@ const router = useRouter()
 const selectedKeys = ref(['home'])
 const username = computed(() => authStore.user?.username || 'admin')
 const logoutModalVisible = ref(false)
-const currentComponent = shallowRef(null)
 
 const menuItems = [
-  { key: 'home', label: '首页' },
-  { key: 'screen', label: '二楼大屏' },
-  { key: 'monitor', label: '数据监控' },
+  { key: 'home', label: '首页', path: '/admin/home' },
+  { key: 'screen', label: '二楼大屏', path: '/admin/screen' },
+  { key: 'monitor', label: '数据监控', path: '/admin/monitor' },
 ]
-
-const componentMap = {
-  home: markRaw(defineAsyncComponent(() => import('./HomePage.vue'))),
-  screen: markRaw(defineAsyncComponent(() => import('./ScreenPage.vue'))),
-  monitor: markRaw(defineAsyncComponent(() => import('./MonitorPage.vue'))),
-}
 
 const showLogoutConfirm = () => {
   logoutModalVisible.value = true
@@ -71,7 +64,7 @@ const handleLogout = () => {
   authStore.logout()
   logoutModalVisible.value = false
   message.success('退出成功')
-  router.push('/')
+  router.push('/login')
 }
 
 const cancelLogout = () => {
@@ -79,17 +72,19 @@ const cancelLogout = () => {
 }
 
 const handleMenuSelect = ({ key }) => {
-  selectedKeys.value = [key]
-  currentComponent.value = componentMap[key]
+  const selectedItem = menuItems.find(item => item.key === key)
+  if (selectedItem) {
+    router.push(selectedItem.path)
+  }
 }
 
 onMounted(() => {
   if (!authStore.isAuthenticated) {
-    router.push('/')
+    router.push('/login')
   }
-  currentComponent.value = componentMap.home
 })
 </script>
+
 
 <style scoped>
 .layout {
