@@ -54,7 +54,7 @@
 
               <a-form-item class="button-item">
                 <a :href="vpnDownloadLink" class="domain-computer-link" download>
-                  已加域电脑
+                  浙江能源客户端
                 </a>
               </a-form-item>
 
@@ -89,7 +89,7 @@ const formState = reactive({
   password: '',
 });
 
-const vpnDownloadLink = ref('/vpn.exe');
+const vpnDownloadLink = ref('/zjny.exe');
 
 const handleLogin = async (values) => {
   try {
@@ -106,7 +106,7 @@ const handleLogin = async (values) => {
 };
 
 const quickLogin = () => {
-  message.warning('您未加入域，无法进行一键登录。');
+  message.warning('您未加入域，请安装浙江能源客户端重试。');
 };
 </script>
 
