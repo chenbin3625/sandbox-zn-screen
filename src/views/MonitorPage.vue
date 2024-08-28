@@ -36,11 +36,6 @@
       @change="handleTableChange"
       class="dashboard-table"
     >
-      <template #bodyCell="{ column, text }">
-        <template v-if="column.dataIndex === 'action'">
-          <a>编辑</a>
-        </template>
-      </template>
     </a-table>
   </div>
 </template>
@@ -146,7 +141,6 @@ export default defineComponent({
       { title: '异常开始时间', dataIndex: 'startTime', key: 'startTime' },
       { title: '异常结束时间', dataIndex: 'endTime', key: 'endTime' },
       { title: '异常小时数', dataIndex: 'duration', key: 'duration' },
-      { title: '操作', dataIndex: 'action', key: 'action' },
     ];
 
     const randomCount = Math.floor(Math.random() * (200 - 100 + 1)) + 100;
