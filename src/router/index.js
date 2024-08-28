@@ -4,32 +4,61 @@ import { message } from 'ant-design-vue'
 
 const routes = [
   {
-    path: '/',
+    path: '/login',
     name: 'login',
     component: () => import('../views/LoginPage.vue'),
     meta: {
       requiresAuth: false,
-      title: '登录 - 浙能生产安全监控系统'
+      title: '登录 - 浙能集团生产安全监控系统'
     }
   },
   {
     path: '/admin',
-    name: 'admin',
     component: () => import('../views/AdminPage.vue'),
     meta: {
       requiresAuth: true,
-      title: '管理后台 - 浙能生产安全监控系统'
-    }
+      title: '管理后台 - 浙能集团生产安全监控系统'
+    },
+    children: [
+      {
+        path: '',
+        name: 'admin-home',
+        component: () => import('../views/AdminHomePage.vue'),
+        meta: {
+          title: '首页 - 浙能集团生产安全监控系统'
+        }
+      },
+      {
+        path: 'screen',
+        name: 'admin-screen',
+        component: () => import('../views/AdminScreenPage.vue'),
+        meta: {
+          title: '二楼大屏 - 浙能集团生产安全监控系统'
+        }
+      },
+      {
+        path: 'monitor',
+        name: 'admin-monitor',
+        component: () => import('../views/AdminMonitorPage.vue'),
+        meta: {
+          title: '数据监控 - 浙能集团生产安全监控系统'
+        }
+      }
+    ]
+  },
+  {
+    path: '/',
+    redirect: '/admin'
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     redirect: () => {
       const authStore = useAuthStore()
-      return authStore.isAuthenticated ? { name: 'admin' } : { name: 'login' }
+      return authStore.isAuthenticated ? { name: 'admin-home' } : { name: 'login' }
     },
     meta: {
-      title: '页面未找到 - 浙能生产安全监控系统'
+      title: '页面未找到 - 浙能集团生产安全监控系统'
     }
   }
 ]
@@ -47,17 +76,17 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // 设置页面标题
-  document.title = to.meta.title || '浙能生产安全监控系统'
+  document.title = to.meta.title || '浙能集团生产安全监控系统'
 
   if (to.name === 'not-found') {
-    const redirectPath = authStore.isAuthenticated ? '后台管理页' : '登录页'
-    message.warning(`路由 "${to.fullPath}" 不存在，正在跳转${redirectPath}`)
-    next(authStore.isAuthenticated ? { name: 'admin' } : { name: 'login' })
+    const redirectPath = authStore.isAuthenticated ? '管理后台首页' : '登录页'
+    message.warning(`路由 "${to.fullPath}" 不存在，正在跳转到${redirectPath}`)
+    next(authStore.isAuthenticated ? { name: 'admin-home' } : { name: 'login' })
   } else if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     message.warning('请先登录')
     next({ name: 'login' })
   } else if (to.name === 'login' && authStore.isAuthenticated) {
-    next({ name: 'admin' })
+    next({ name: 'admin-home' })
   } else {
     next()
   }
