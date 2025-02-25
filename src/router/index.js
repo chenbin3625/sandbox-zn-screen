@@ -1,6 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
+// 系统标题常量
+const SYSTEM_TITLE = '生产安全监控系统'
+
+// 通用跳转逻辑
+const redirectToDefaultPage = () => {
+  const authStore = useAuthStore()
+  return authStore.isAuthenticated ? { name: 'admin-home' } : { name: 'login' }
+}
+
 const routes = [
   {
     path: '/login',
@@ -8,22 +17,25 @@ const routes = [
     component: () => import('../views/LoginPage.vue'),
     meta: {
       requiresAuth: false,
-      title: '登录 - 浙能集团生产安全监控系统'
+      title: '登录'
     }
   },
   {
     path: '/admin',
+    name: 'admin',
     component: () => import('../views/AdminPage.vue'),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: '管理后台'
     },
     children: [
       {
-        path: '',
+        path: 'home',
         name: 'admin-home',
         component: () => import('../views/AdminHomePage.vue'),
         meta: {
-          title: '首页 - 浙能集团生产安全监控系统'
+          requiresAuth: true,
+          title: '首页'
         }
       },
       {
@@ -31,7 +43,8 @@ const routes = [
         name: 'admin-screen',
         component: () => import('../views/AdminScreenPage.vue'),
         meta: {
-          title: '二楼大屏 - 浙能集团生产安全监控系统'
+          requiresAuth: true,
+          title: '二楼大屏'
         }
       },
       {
@@ -39,28 +52,27 @@ const routes = [
         name: 'admin-monitor',
         component: () => import('../views/AdminMonitorPage.vue'),
         meta: {
-          title: '数据监控 - 浙能集团生产安全监控系统'
+          requiresAuth: true,
+          title: '数据监控'
         }
+      },
+      {
+        path: '',
+        redirect: { name: 'admin-home' }
       }
     ]
   },
   {
     path: '/',
     name: 'root',
-    redirect: () => {
-      const authStore = useAuthStore()
-      return authStore.isAuthenticated ? { name: 'admin-home' } : { name: 'login' }
-    }
+    redirect: redirectToDefaultPage
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
-    redirect: () => {
-      const authStore = useAuthStore()
-      return authStore.isAuthenticated ? { name: 'admin-home' } : { name: 'login' }
-    },
+    redirect: redirectToDefaultPage,
     meta: {
-      title: '页面未找到 - 浙能集团生产安全监控系统'
+      title: '页面未找到'
     }
   }
 ]
@@ -78,7 +90,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // 设置页面标题
-  document.title = to.meta.title || '浙能集团生产安全监控系统'
+  document.title = to.meta.title ? `${to.meta.title} - ${SYSTEM_TITLE}` : SYSTEM_TITLE
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'login', query: { redirect: to.fullPath } })

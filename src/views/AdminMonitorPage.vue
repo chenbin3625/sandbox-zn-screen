@@ -60,93 +60,14 @@ import { defineComponent, ref, reactive, onMounted, computed, watch } from 'vue'
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
+import { useAuthStore } from '../stores/auth'; // 导入认证存储
 
 dayjs.locale('zh-cn');
 
-const generateRandomData = (count) => {
-  const sampleData = [
-    {
-      name: '嘉华发电八号机CEMS脱硫出口SO2浓度',
-      code: '2331.C80HTA50CQ003',
-      company: '嘉华发电',
-      equipment: '嘉华#8',
-    },
-    {
-      name: '滨海热电三号机CEMS脱硫出口NOx浓度',
-      code: '2181.C30HTA50CQ001',
-      company: '滨海热电',
-      equipment: '滨海#3',
-    },
-    {
-      name: '镇海燃热十一号机CEMS出口NOx浓度',
-      code: '2361.AB0HTA50CQ001',
-      company: '镇海燃热',
-      equipment: '镇燃热#21',
-    },
-    {
-      name: '阿克苏热电二号机CEMS脱硫出口SO2浓度(折算值)',
-      code: '2271.C20HTA50CQ003A',
-      company: '阿克苏热电',
-      equipment: '阿克苏#2',
-    },
-    {
-      name: '乐清发电一号机发电机有功功率选择后',
-      code: '2251.C10MKA01FE100',
-      company: '乐清发电',
-      equipment: '乐清#3',
-    },
-    {
-      name: '凤台发电一号机CEMS脱硫出口粉尘浓度',
-      code: '2121.C10HTA50CQ005',
-      company: '凤台发电',
-      equipment: '凤台#1',
-    },
-    {
-      name: '萧山发电五号机CEMS出口SO2浓度',
-      code: '2031.A50HTA50CQ003',
-      company: '萧山发电',
-      equipment: '萧燃#5',
-    },
-    {
-      name: '萧山发电五号机CEMS出口NOx浓度(折算值)',
-      code: '2031.A50HTA50CQ001A',
-      company: '萧山发电',
-      equipment: '萧燃#5',
-    },
-    {
-      name: '凤台发电三号机CEMS脱硫出口NOx浓度',
-      code: '2121.C30HTA50CQ001',
-      company: '凤台发电',
-      equipment: '凤台#3',
-    },
-  ];
-
-  const exceptionTypes = ['中断', '超限', '故障'];
-
-  return Array.from({ length: count }, (_, index) => {
-    const sampleIndex = Math.floor(Math.random() * sampleData.length);
-    const sample = sampleData[sampleIndex];
-
-    const startTime = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000);
-    const endTime = new Date(startTime.getTime() + Math.random() * (Date.now() - startTime.getTime()));
-    const durationHours = (endTime - startTime) / (1000 * 60 * 60);
-
-    return {
-      key: (index + 1).toString(),
-      name: sample.name,
-      code: sample.code,
-      company: sample.company,
-      equipment: sample.equipment,
-      exceptionType: exceptionTypes[Math.floor(Math.random() * exceptionTypes.length)],
-      startTime: startTime.toLocaleString('zh-CN', { hour12: false }),
-      endTime: endTime.toLocaleString('zh-CN', { hour12: false }),
-      duration: durationHours.toFixed(2),
-    };
-  });
-};
-
 export default defineComponent({
   setup() {
+    const authStore = useAuthStore(); // 使用认证存储
+
     const columns = [
       { title: '测点名称', dataIndex: 'name', key: 'name' },
       { title: '测点编码', dataIndex: 'code', key: 'code' },
@@ -158,8 +79,8 @@ export default defineComponent({
       { title: '异常小时数', dataIndex: 'duration', key: 'duration' },
     ];
 
-    const randomCount = Math.floor(Math.random() * (200 - 100 + 1)) + 100;
-    const data = ref(generateRandomData(randomCount));
+    // 从认证存储中获取监控数据
+    const data = ref(authStore.getMonitorData());
 
     const companies = [...new Set(data.value.map(item => item.company))];
     const equipments = [...new Set(data.value.map(item => item.equipment))];

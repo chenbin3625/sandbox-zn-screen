@@ -1,10 +1,7 @@
 <template>
   <a-layout class="layout">
     <a-layout-header class="header">
-      <div class="logo-title">
-        <img src="/src/assets/logo-mini.png" alt="Logo" class="logo" />
-        <span class="title">浙能集团生产安全监控系统</span>
-      </div>
+      <div class="logo-title">生产安全监控系统</div>
       <a-menu
         v-model:selectedKeys="selectedKeys"
         mode="horizontal"
@@ -38,13 +35,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { message } from 'ant-design-vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 
 const selectedKeys = ref(['home'])
 const username = computed(() => authStore.user?.username || 'admin')
@@ -55,6 +53,28 @@ const menuItems = [
   { key: 'screen', label: '二楼大屏', path: '/admin/screen' },
   { key: 'monitor', label: '数据监控', path: '/admin/monitor' },
 ]
+
+// 根据当前路由路径设置选中的菜单项
+const setSelectedMenuFromPath = (path) => {
+  const paths = path.split('/')
+  if (paths.length >= 3) {
+    const currentPath = paths[2] // admin/[path]
+    // 查找匹配的菜单项
+    const menuItem = menuItems.find(item => {
+      const itemPaths = item.path.split('/')
+      return itemPaths[itemPaths.length - 1] === currentPath
+    })
+    
+    if (menuItem) {
+      selectedKeys.value = [menuItem.key]
+    }
+  }
+}
+
+// 监听路由变化
+watch(() => route.path, (newPath) => {
+  setSelectedMenuFromPath(newPath)
+}, { immediate: true })
 
 const showLogoutConfirm = () => {
   logoutModalVisible.value = true
@@ -73,16 +93,15 @@ const cancelLogout = () => {
 
 const handleMenuSelect = ({ key }) => {
   const selectedItem = menuItems.find(item => item.key === key)
-  if (selectedItem) {
-    router.push(selectedItem.path)
+  if (selectedItem && route.path !== selectedItem.path) {
+    router.push({
+      path: selectedItem.path,
+      // 保留当前查询参数
+      query: route.query
+    })
   }
 }
 
-onMounted(() => {
-  if (!authStore.isAuthenticated) {
-    router.push('/login')
-  }
-})
 </script>
 
 
@@ -102,8 +121,9 @@ onMounted(() => {
 }
 
 .logo-title {
-  display: flex;
-  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
 }
 
 .logo {
