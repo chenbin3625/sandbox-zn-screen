@@ -1,4 +1,18 @@
-# zn大屏沙箱
+# zn大屏沙箱 / ZN Screen Sandbox
+
+一个基于 Vue 3、Vite、ECharts、Pinia 和 Ant Design Vue 的智慧大屏沙箱项目，用于搭建登录、管理后台、监控页和大屏展示等数据可视化页面。
+
+**English Summary**
+
+ZN Screen Sandbox is a Vue 3 data-visualization sandbox for smart screen and monitoring-dashboard scenarios. It uses Vite, ECharts, Pinia, Vue Router, and Ant Design Vue to prototype login, admin, monitoring, and full-screen display pages.
+
+## 功能概览 / Features
+
+- 智慧大屏与监控页原型 / Smart screen and monitoring page prototypes
+- 后台管理与登录流程 / Admin and login flows
+- ECharts 数据可视化组件 / ECharts-based visualization
+- Vite + Vue 3 开发体验 / Vite-powered Vue 3 workflow
+- Docker、Nginx 与 Vercel 部署配置 / Docker, Nginx, and Vercel deployment files
 
 ## 环境准备
 
