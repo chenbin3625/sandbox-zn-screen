@@ -1,5 +1,7 @@
 # ZN Screen Sandbox
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A smart-screen sandbox project built with Vue 3, Vite, ECharts, Pinia and Ant Design Vue, used to prototype data-visualization pages such as login screens, admin dashboards, monitoring pages and full-screen displays.
 
 ## Features
@@ -47,6 +49,10 @@ pnpm run build
 ## FAQ
 
 If you hit the `Cannot find matching keyid` error while installing pnpm through corepack, try one of the alternative install methods above.
+
+## License
+
+This project is released under the [MIT License](LICENSE).
 
 ---
 
@@ -99,3 +105,7 @@ pnpm run build
 ## 常见问题
 
 如果使用 corepack 安装 pnpm 时遇到 "Cannot find matching keyid" 错误，请尝试上述替代安装方法。
+
+## 许可证
+
+本项目以 [MIT License](LICENSE) 授权。
